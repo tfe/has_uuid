@@ -44,6 +44,10 @@ I'm not sure why you'd use these, but they're there if you want them:
 	@post.uuid_valid?
 	@post.uuid_invalid?
 
+If you want to be able to, say, have your application accept requests for resources either by ID or their UUID, then you could do something like this in your WidgetController `show` method:
+
+	Widget.find_by_id_or_uuid(params[:id])
+
 
 Credit
 ------

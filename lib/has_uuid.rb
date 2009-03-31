@@ -39,6 +39,16 @@ module ActiveRecord #:nodoc:
             write_inheritable_attribute :uuid_column, options[:column]
           end
         end
+        
+        # Find appropriately based on length of the argument.
+        # Assuming we're using 32-bit ints, the maximum size of a decimal ID is 10 digits long.
+        def find_by_id_or_uuid(id_or_uuid)
+          if id_or_uuid.to_s.length > 10
+            find_by_uuid(id_or_uuid)
+          else
+            find(id_or_uuid)
+          end
+        end
       end
 
       module InstanceMethods #:nodoc:

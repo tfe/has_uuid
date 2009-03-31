@@ -100,6 +100,16 @@ class HasUuidTest < Test::Unit::TestCase
     @thingy.reload
     assert_nil @thingy.uuid
   end
-
+  
+  
+  
+  def test_finding_by_id_or_uuid
+    @widget = Widget.new
+    @widget.save
+    @widget.reload
+    
+    assert_equal(@widget, Widget.find_by_id_or_uuid(@widget.uuid))
+    assert_equal(@widget, Widget.find_by_id_or_uuid(@widget.id))
+  end
   
 end
