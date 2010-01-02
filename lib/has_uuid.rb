@@ -59,7 +59,7 @@ module ActiveRecord #:nodoc:
             
             return if uuid_valid? unless options[:force]
             
-            uuid = UUID.send("#{self.class.read_inheritable_attribute(:uuid_generator)}_create").to_s
+            uuid = UUIDTools::UUID.send("#{self.class.read_inheritable_attribute(:uuid_generator)}_create").to_s
             send("#{self.class.read_inheritable_attribute(:uuid_column)}=", uuid)
           end
         
@@ -70,7 +70,7 @@ module ActiveRecord #:nodoc:
           
           def uuid_valid?
             begin
-              UUID.parse(uuid).kind_of? UUID
+              UUIDTools::UUID.parse(uuid).kind_of? UUID
             rescue ArgumentError, TypeError
               false
             end
