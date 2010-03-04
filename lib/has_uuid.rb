@@ -49,6 +49,13 @@ module ActiveRecord #:nodoc:
             find(id_or_uuid.to_i)
           end
         end
+        
+        # Find by bang (raises exception unless record found)
+        # TODO: implement this more cleanly
+        def find_by_id_or_uuid!(id_or_uuid)
+          raise RecordNotFound unless record = self.find_by_id_or_uuid(id_or_uuid)
+          return record
+        end
       end
 
       module InstanceMethods #:nodoc:
