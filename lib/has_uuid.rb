@@ -1,4 +1,5 @@
 require 'uuidtools'
+require 'uuidtools_extensions'
 
 module ActiveRecord #:nodoc:
   module Acts #:nodoc:
