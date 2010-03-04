@@ -40,14 +40,17 @@ module ActiveRecord #:nodoc:
           end
         end
         
-        # Find appropriately based on length of the argument.
-        # Assuming we're using 32-bit ints, the maximum size of a decimal ID is 10 digits long.
+        # Find appropriately based whether argument is a UUID.
         def find_by_id_or_uuid(id_or_uuid)
-          if id_or_uuid.to_s.length > 10
-            find_by_uuid(id_or_uuid)
-          else
-            find(id_or_uuid)
+          
+          # Checks to see if argument is a valid UUID
+          valid_uuid = begin
+            UUIDTools::UUID.parse(id_or_uuid).kind_of? UUIDTools::UUID
+          rescue ArgumentError, TypeError
+            false
           end
+          
+          valid_uuid ? find_by_uuid(id_or_uuid) : find(id_or_uuid.to_i)
         end
       end
 
