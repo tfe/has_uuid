@@ -43,15 +43,11 @@ module ActiveRecord #:nodoc:
         
         # Find appropriately based whether argument is a UUID.
         def find_by_id_or_uuid(id_or_uuid)
-          
-          # Checks to see if argument is a valid UUID
-          valid_uuid = begin
-            UUIDTools::UUID.parse(id_or_uuid).kind_of? UUIDTools::UUID
-          rescue ArgumentError, TypeError
-            false
+          if UUIDTools::UUID.valid?(id_or_uuid)
+            send("find_by_#{self.read_inheritable_attribute(:uuid_column)}", id_or_uuid) # find_by_uuid(id_or_uuid)
+          else
+            find(id_or_uuid.to_i)
           end
-          
-          valid_uuid ? find_by_uuid(id_or_uuid) : find(id_or_uuid.to_i)
         end
       end
 
@@ -63,8 +59,8 @@ module ActiveRecord #:nodoc:
             
             return if uuid_valid? unless options[:force]
             
-            uuid = UUIDTools::UUID.send("#{self.class.read_inheritable_attribute(:uuid_generator)}_create").to_s
-            send("#{self.class.read_inheritable_attribute(:uuid_column)}=", uuid)
+            new_uuid = UUIDTools::UUID.send("#{self.class.read_inheritable_attribute(:uuid_generator)}_create").to_s
+            send("#{self.class.read_inheritable_attribute(:uuid_column)}=", new_uuid)
           end
         
           def assign_uuid!
@@ -73,11 +69,7 @@ module ActiveRecord #:nodoc:
           end
           
           def uuid_valid?
-            begin
-              UUIDTools::UUID.parse(uuid).kind_of? UUID
-            rescue ArgumentError, TypeError
-              false
-            end
+            UUIDTools::UUID.valid?(send(self.class.read_inheritable_attribute(:uuid_column)))
           end
           
           def uuid_invalid?

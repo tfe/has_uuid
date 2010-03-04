@@ -11,5 +11,8 @@ silence_stream(STDOUT) do
     create_table :thingies do |t|
       t.string :uuid
     end
+    create_table :blidgets do |t|
+      t.string :token
+    end
   end
 end

@@ -8,6 +8,10 @@ class Thingy < ActiveRecord::Base
   has_uuid :auto => false
 end
 
+class Blidget < ActiveRecord::Base
+  has_uuid :column => :token
+end
+
 class HasUuidTest < Test::Unit::TestCase
   
   def test_method_assign_uuid
@@ -103,6 +107,19 @@ class HasUuidTest < Test::Unit::TestCase
   
   
   
+  def test_uuid_column_should_be_customizable
+    @blidget = Blidget.new
+    @blidget.save
+    uuid = @blidget.token
+    @blidget.reload
+    
+    assert @blidget.token.present?
+    assert_nothing_raised { @found_blidget = Blidget.find_by_id_or_uuid(uuid) }
+    assert_equal(@blidget, @found_blidget)
+  end
+  
+  
+  
   def test_finding_by_id_or_uuid
     @widget = Widget.new
     @widget.save
@@ -110,6 +127,15 @@ class HasUuidTest < Test::Unit::TestCase
     
     assert_equal(@widget, Widget.find_by_id_or_uuid(@widget.uuid))
     assert_equal(@widget, Widget.find_by_id_or_uuid(@widget.id))
+  end
+  
+  def test_finding_by_id_or_uuid_with_custom_uuid_column
+    @blidget = Blidget.new
+    @blidget.save
+    @blidget.reload
+    
+    assert_equal(@blidget, Blidget.find_by_id_or_uuid(@blidget.token))
+    assert_equal(@blidget, Blidget.find_by_id_or_uuid(@blidget.id))
   end
   
 end
